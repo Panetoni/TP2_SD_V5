@@ -9,9 +9,9 @@ app = Flask(__name__)
 proposer_id = os.getenv("PROPOSER_ID", "proposer_1")
 
 # Altere para usar os nomes individuais dos acceptors:
-acceptors = ["v5_acceptor_1", "v5_acceptor_2", "v5_acceptor_3"]
+acceptors = ["tp2_sd_v5_acceptor_1", "tp2_sd_v5_acceptor_2", "tp2_sd_v5_acceptor_3"]
 # Você pode manter os learners se estiverem funcionando via alias ou também usar os nomes individuais:
-learners = ["v5_learner_1", "v5_learner_2"]
+learners = ["tp2_sd_v5_learner_1", "tp2_sd_v5_learner_2"]
 
 current_tid = 0
 registered_clients = {}  # client_id -> client_addr
