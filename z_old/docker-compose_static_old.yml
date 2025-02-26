@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  proposer1:
+    build: ./proposer
+    environment:
+      - PROPOSER_ID=proposer_1
+    networks:
+      - paxos_net
+
+  proposer2:
+    build: ./proposer
+    environment:
+      - PROPOSER_ID=proposer_2
+    networks:
+      - paxos_net
+
+  acceptor1:
+    build: ./acceptor
+    networks:
+      - paxos_net
+
+  acceptor2:
+    build: ./acceptor
+    networks:
+      - paxos_net
+
+  acceptor3:
+    build: ./acceptor
+    networks:
+      - paxos_net
+
+  learner1:
+    build: ./learner
+    volumes:
+      - ./shared_data:/shared_data
+    networks:
+      - paxos_net
+
+  learner2:
+    build: ./learner
+    volumes:
+      - ./shared_data:/shared_data
+    networks:
+      - paxos_net
+
+  client1:
+    build: ./client
+    environment:
+      - CLIENT_ID=client_1
+    networks:
+      - paxos_net
+
+  client2:
+    build: ./client
+    environment:
+      - CLIENT_ID=client_2
+    networks:
+      - paxos_net
+
+networks:
+  paxos_net:
+    driver: bridge
+
+volumes:
+  shared_data:

@@ -1,0 +1,17 @@
+# Estrutura de Projeto
+paxos-distributed-system/
+├── docker-compose.yml
+├── client/
+│   ├── Dockerfile
+│   └── client.py
+├── proposer/
+│   ├── Dockerfile
+│   └── proposer.py
+├── acceptor/
+│   ├── Dockerfile
+│   └── acceptor.py
+├── learner/
+│   ├── Dockerfile
+│   └── learner.py
+└── shared_data/
+    └── resource.txt

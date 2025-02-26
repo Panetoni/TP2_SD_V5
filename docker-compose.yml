@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  proposer:
+    build: ./proposer
+    environment:
+      - PROPOSER_ID=proposer-${TASK_SLOT}
+    hostname: proposer-${TASK_SLOT}
+    ports:
+      - "5001-5005:5000"  # Define um range de portas para cada réplica
+    networks:
+      paxos_net:
+        aliases:
+          - proposer
+    deploy:
+      replicas: 5
+
+  acceptor:
+    build: ./acceptor
+    environment:
+      - ACCEPTOR_ID=acceptor-${TASK_SLOT}
+    hostname: acceptor-${TASK_SLOT}
+    ports:
+      - "5006-5008:5000"
+    networks:
+      paxos_net:
+        aliases:
+          - acceptor
+    deploy:
+      replicas: 3
+
+  learner:
+    build: ./learner
+    environment:
+      - LEARNER_ID=learner-${TASK_SLOT}
+    hostname: learner-${TASK_SLOT}
+    ports:
+      - "5009-5010:5000"
+    volumes:
+      - ./shared_data:/shared_data
+    networks:
+      paxos_net:
+        aliases:
+          - learner
+    deploy:
+      replicas: 2
+
+  client:
+    build: ./client
+    environment:
+      - CLIENT_ID=client-${TASK_SLOT}
+      - CLIENT_PORT=5011
+    hostname: client-${TASK_SLOT}
+    ports:
+      - "5011-5015:5000"
+    networks:
+      paxos_net:
+        aliases:
+          - client
+    tty: true
+    stdin_open: true
+    deploy:
+      replicas: 5
+
+networks:
+  paxos_net:
+    driver: bridge
+
+volumes:
+  shared_data:

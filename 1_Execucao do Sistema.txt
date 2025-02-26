@@ -1,0 +1,32 @@
+#. Iniciar o docker
+sudo systemctl start docker
+
+#. Criar a rede manualmente:
+docker network create paxos_net
+
+#. Execute o escalonamento explicito:
+docker-compose up -d \
+  --scale proposer=5 \
+  --scale client=5 \
+  --scale acceptor=3 \
+  --scale learner=2
+
+#. Verifique os containers:
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# Parar o sistema:
+docker-compose down -v
+
+# Limpar ambiente
+docker system prune -a --volumes
+
+### Verifique a rede:
+docker network inspect v5_paxos_net
+
+### Teste a conectividade entre containers:
+docker exec v5_client_1 ping proposer-service
+# Como nao tem ping usar:
+docker exec -it v5_client_1 sh -c "apt update && apt install -y curl; curl -v http://proposer-service:5000"
+
+### Verifique logs dos Proposers:
+docker-compose logs proposer

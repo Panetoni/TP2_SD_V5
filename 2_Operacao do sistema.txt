@@ -1,0 +1,53 @@
+####### Testando a Operação #######
+
+####### CLIENT:
+# Acesse um cliente (em outro terminal):
+docker attach <client_name>
+
+# Execute operações:
+Choose an option: 1  # Escreva
+Choose an option: 2  # Leia
+Choose an option: 3  # Exit
+
+
+####### PROPOSER:
+# Remova um proposer:
+docker rm -f <proposer_name>
+
+
+####### ACCEPTOR:
+# Parar um acceptor durante a execução:
+docker stop paxos-distributed-system_acceptor3_1
+
+
+####### LEARNER:
+# Verifique o arquivo compartilhado:
+docker exec <dir_name>-learner1-1 cat /shared_data/resource.txt
+
+
+####### LOGS:
+# Verificar Logs:
+docker-compose logs proposer_2
+docker-compose logs -f
+
+# Monitorar logs:
+docker-compose logs -f proposer1 learner1
+
+
+######## Recurso:
+# Inspecionar Arquivo de Recurso:
+tail -f shared_data/resource.txt
+
+# Acompanhar o arquivo de recurso
+watch -n 1 cat shared_data/resource.txt
+
+
+
+### Limpe o ambiente completamente:
+docker-compose down -v
+docker system prune -a
+
+docker-compose build --no-cache
+docker-compose up -d --scale proposer=5 --scale client=5 --scale acceptor=3 --scale learner=2
+
+..............................................................................................
