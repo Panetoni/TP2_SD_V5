@@ -10,7 +10,7 @@ proposer_id = os.getenv("PROPOSER_ID", "proposer_1")
 
 # Altere para usar os nomes individuais dos acceptors:
 acceptors = ["tp2_sd_v5_acceptor_1", "tp2_sd_v5_acceptor_2", "tp2_sd_v5_acceptor_3"]
-# Você pode manter os learners se estiverem funcionando via alias ou também usar os nomes individuais:
+# E para os learners:
 learners = ["tp2_sd_v5_learner_1", "tp2_sd_v5_learner_2"]
 
 current_tid = 0
@@ -23,6 +23,11 @@ def handle_propose():
         return jsonify({"status": "error", "message": "Request body missing"}), 400
 
     print(f"[{proposer_id}] Proposta recebida: {client_data}")  # Log para debug
+
+    # Extraindo e logando a mensagem enviada pelo cliente (se houver)
+    message = client_data.get("message", "")
+    if message:
+        print(f"[{proposer_id}] Mensagem do cliente: {message}")
 
     tid = generate_tid()
 
@@ -50,7 +55,7 @@ def handle_propose():
                     f"http://{acceptor}:5000/accept",
                     json={
                         "tid": tid,
-                        "value": client_data,
+                        "value": client_data,  # Inclui todos os dados, inclusive "message"
                         "proposer_id": proposer_id
                     },
                     timeout=2

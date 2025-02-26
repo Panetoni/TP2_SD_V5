@@ -63,10 +63,13 @@ class InteractiveClient:
     def send_write_request(self):
         proposer = self.proposers[0]
         timestamp = int(time.time())
+        # Solicita a mensagem ao usuário
+        message = input("Digite a mensagem para enviar: ")
         data = {
             "client_id": self.client_id,
             "timestamp": timestamp,
-            "client_addr": self.client_addr
+            "client_addr": self.client_addr,
+            "message": message  # novo campo para a mensagem
         }
         try:
             response = requests.post(
@@ -81,6 +84,7 @@ class InteractiveClient:
                 print(f"[Cliente {self.client_id}] Write request FAILED")
         except Exception as e:
             print(f"[Cliente {self.client_id}] Erro ao contactar proposer: {str(e)}")
+
 
     def check_resource(self):
         learner = "learner-1"  # ou use uma lista se desejar balancear

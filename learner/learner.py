@@ -11,8 +11,9 @@ def learn():
     tid = request.json["tid"]
     value = request.json["value"]
     try:
+        # Escreve os dados no resource.txt, incluindo a mensagem (se houver)
         with open(RESOURCE_PATH, "a") as f:
-            f.write(f"TID: {tid}, Client: {value['client_id']}, Timestamp: {value['timestamp']}\n")
+            f.write(f"TID: {tid}, Client: {value['client_id']}, Timestamp: {value['timestamp']}, Message: {value.get('message', '')}\n")
         print(f"[{learner_id}] Recurso atualizado com TID {tid}")
         try:
             response = requests.post(
