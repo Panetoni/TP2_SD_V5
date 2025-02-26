@@ -13,7 +13,6 @@ acceptors = ["tp2_sd_v5_acceptor_1", "tp2_sd_v5_acceptor_2", "tp2_sd_v5_acceptor
 # E para os learners:
 learners = ["tp2_sd_v5_learner_1", "tp2_sd_v5_learner_2"]
 
-current_tid = 0
 registered_clients = {}  # client_id -> client_addr
 
 @app.route('/propose', methods=['POST'])
@@ -86,9 +85,8 @@ def handle_propose():
     return jsonify({"status": "FAILED"}), 400
 
 def generate_tid():
-    global current_tid
-    current_tid += 1
-    return f"{proposer_id}-{current_tid}"
+    # Gera um TID baseado no timestamp em milissegundos, garantindo que seja único e crescente.
+    return f"{proposer_id}-{int(time.time() * 1000)}"
 
 # Endpoints para registrar/deregistrar clientes
 @app.route('/register', methods=['POST'])

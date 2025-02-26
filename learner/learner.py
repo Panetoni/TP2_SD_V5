@@ -1,4 +1,5 @@
 import os
+import fcntl  # Para bloqueio de arquivo
 from flask import Flask, jsonify, request
 import requests
 
@@ -11,9 +12,21 @@ def learn():
     tid = request.json["tid"]
     value = request.json["value"]
     try:
-        # Escreve os dados no resource.txt, incluindo a mensagem (se houver)
-        with open(RESOURCE_PATH, "a") as f:
+        # Abre o arquivo em modo leitura/escrita (a+)
+        with open(RESOURCE_PATH, "a+") as f:
+            # Bloqueia o arquivo para acesso exclusivo
+            fcntl.flock(f, fcntl.LOCK_EX)
+            f.seek(0)
+            lines = f.readlines()
+            # Verifica se o TID já foi commitado
+            if any(f"TID: {tid}," in line for line in lines):
+                print(f"[{learner_id}] TID {tid} já foi commitado; ignorando duplicata.")
+                fcntl.flock(f, fcntl.LOCK_UN)
+                return jsonify({"status": "OK", "message": "Duplicate ignored"}), 200
+            # Se não existir, escreve a nova entrada
             f.write(f"TID: {tid}, Client: {value['client_id']}, Timestamp: {value['timestamp']}, Message: {value.get('message', '')}\n")
+            f.flush()  # Garante que os dados sejam escritos
+            fcntl.flock(f, fcntl.LOCK_UN)
         print(f"[{learner_id}] Recurso atualizado com TID {tid}")
         try:
             response = requests.post(
