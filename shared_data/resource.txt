@@ -1,5 +1,0 @@
-TID: proposer-1-1740612138957-1, Client: client-1, Timestamp: 1740612134, Message: CLiente 1 mensagem
-TID: proposer-1-1740612152761-1, Client: client-1, Timestamp: 1740612149, Message: Cliente 2 mensagem
-TID: proposer-1-1740612480509, Client: client-1, Timestamp: 1740612478, Message: cliente 1 mensagem
-TID: proposer-1-1740612513647, Client: client-1, Timestamp: 1740612508, Message: client 2 message
-TID: proposer-1-1740612549595, Client: client-1, Timestamp: 1740612545, Message: client 3 message

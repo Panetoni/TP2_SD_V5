@@ -60,16 +60,16 @@ class InteractiveClient:
         except Exception as e:
             print(f"[Cliente {self.client_id}] Erro ao remover: {str(e)}")
 
-    def send_write_request(self):
+    def send_write_request(self, message=None):
         proposer = self.proposers[0]
         timestamp = int(time.time())
-        # Solicita a mensagem ao usuário
-        message = input("Digite a mensagem para enviar: ")
+        if message is None:
+            message = input("Digite a mensagem para enviar: ")
         data = {
             "client_id": self.client_id,
             "timestamp": timestamp,
             "client_addr": self.client_addr,
-            "message": message  # novo campo para a mensagem
+            "message": message
         }
         try:
             response = requests.post(
@@ -85,9 +85,14 @@ class InteractiveClient:
         except Exception as e:
             print(f"[Cliente {self.client_id}] Erro ao contactar proposer: {str(e)}")
 
-
+    def send_multiple_write_requests(self):
+        message = input("Digite a mensagem para enviar repetidamente: ")
+        while True:
+            self.send_write_request(message)
+            time.sleep(1)  # Intervalo entre envios
+    
     def check_resource(self):
-        learner = "learner-1"  # ou use uma lista se desejar balancear
+        learner = "learner-1"
         try:
             response = requests.get(f"http://{learner}:5000/read", timeout=2)
             print("\n=== Conteúdo Atual do Recurso ===")
@@ -103,6 +108,7 @@ def start_interactive_client(client):
         print("2. Read resource")
         print("3. Exit and deregister")
         print("4. Close interface (stay in network)")
+        print("5. Send multiple messages in a loop")
         choice = input("Choose an option: ")
 
         if choice == "1":
@@ -112,11 +118,13 @@ def start_interactive_client(client):
         elif choice == "3":
             client.deregister()
             client.should_exit = True
-            os._exit(0)  # Sai completamente
+            os._exit(0)
         elif choice == "4":
             print("\nInterface closed. Client remains active in network.")
             print("Use 'docker attach <container_name>' to reopen interface.")
-            return  # Sai da interface mas mantém o processo
+            return
+        elif choice == "5":
+            client.send_multiple_write_requests()
         else:
             print("Opção inválida!")
 
@@ -124,19 +132,16 @@ if __name__ == "__main__":
     client_id = os.getenv("CLIENT_ID", "client-1")
     proposers = ["proposer-1"]
     
-    # Inicia o servidor de notificações em thread não-daemon
     notification_thread = threading.Thread(
         target=run_notification_server,
         daemon=False
     )
     notification_thread.start()
     
-    # Mantém o processo principal ativo
     client = InteractiveClient(client_id, proposers)
     client.register()
     
     while True:
         start_interactive_client(client)
-        # Loop vazio para manter o processo ativo
         while True:
             time.sleep(1)
