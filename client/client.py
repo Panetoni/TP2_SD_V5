@@ -87,8 +87,14 @@ class InteractiveClient:
 
     def send_multiple_write_requests(self):
         message = input("Digite a mensagem para enviar repetidamente: ")
-        while True:
-            self.send_write_request(message)
+        try:
+            num_repeats = int(input("Quantas vezes deseja enviar a mensagem? "))
+        except ValueError:
+            print("Número inválido!")
+            return
+        
+        for i in range(1, num_repeats + 1):
+            self.send_write_request(f"{message} (Iteração {i})")
             time.sleep(1)  # Intervalo entre envios
     
     def check_resource(self):
